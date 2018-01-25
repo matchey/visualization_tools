@@ -84,7 +84,7 @@ void BoundingBoxArray::push_back(T_pc pc_in)
 	bb.pc2bb(pc);
 	push_back(bb);
 }
-template void BoundingBoxArray::push_back<pcl::PointCloud<pcl::PointXYZ>::Ptr&>(pcl::PointCloud<pcl::PointXYZ>::Ptr&);
+// template void BoundingBoxArray::push_back<pcl::PointCloud<pcl::PointXYZ>::Ptr&>(pcl::PointCloud<pcl::PointXYZ>::Ptr&);
 template void BoundingBoxArray::push_back<pcl::PointCloud<pcl::PointNormal>::Ptr&>(pcl::PointCloud<pcl::PointNormal>::Ptr&);
 template void BoundingBoxArray::push_back<pcl::PointCloud<pcl::PointXYZINormal>::Ptr&>(pcl::PointCloud<pcl::PointXYZINormal>::Ptr&);
 template void BoundingBoxArray::push_back<pcl::PointCloud<pcl::PointXYZRGB>::Ptr&>(pcl::PointCloud<pcl::PointXYZRGB>::Ptr&);

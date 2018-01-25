@@ -35,15 +35,22 @@ int main(int argc, char* argv[])
 	ros::Subscriber sub_wheel = n.subscribe<nav_msgs::Odometry>("/tinypower/odom", 1, wheelCallback);
 	ros::Subscriber sub_human = n.subscribe<sensor_msgs::PointCloud2>("/human_recognition/positive_pt", 1, humanCallback);
 
+	ros::Publisher pub_human = n.advertise<sensor_msgs::PointCloud2>("/human_recognition/positive_position", 1);
+
 	ros::Time::init();
 	ros::Rate loop_rate(10);
 
 	BoundingBox bb;
 	BoundingBoxArray bbs;
 
+	pcl::PointCloud<pcl::PointXYZ>::Ptr pc(new pcl::PointCloud<pcl::PointXYZ>);
+	pcl::PointXYZ p;
+
 	while(ros::ok()){
-
-
+		p.x = pose.position.x;
+		p.y = pose.position.y;
+		pc->points.push_back(p);
+		// pub_human();
 		// bb.pc2bb(pc);
 		bb.setPose(pose);
 		bb.publish();

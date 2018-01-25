@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   visualization_msgs
   tf
+  mmath
 )
 
 find_package(cmake_modules)
@@ -140,6 +141,9 @@ SET(CMAKE_CXX_FLAGS "-std=c++11 -O2 -g -Wall ${CMAKE_CXX_FLAGS}")
 # )
 add_library(bounding_box src/bounding_box.cpp)
 add_library(bounding_box_array src/bounding_box.cpp src/bounding_box_array.cpp)
+add_library(velocity_arrow src/velocity_arrow.cpp)
+add_library(velocity_arrow_array src/velocity_arrow.cpp src/velocity_arrow_array.cpp)
+# add_library(velocity_arrow_array src/velocity_arrow.cpp src/velocity_arrow_array.cpp)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -151,6 +155,7 @@ add_library(bounding_box_array src/bounding_box.cpp src/bounding_box_array.cpp)
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/visualization_tools_node.cpp)
 add_executable(test_bb src/test.cpp src/bounding_box.cpp src/bounding_box_array.cpp)
+add_executable(test_velocity_arrows src/test_arrow.cpp src/velocity_arrow.cpp src/velocity_arrow_array.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -167,6 +172,7 @@ add_executable(test_bb src/test.cpp src/bounding_box.cpp src/bounding_box_array.
 #   ${catkin_LIBRARIES}
 # )
 target_link_libraries(test_bb ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+target_link_libraries(test_velocity_arrows differential ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
 #############
 ## Install ##
