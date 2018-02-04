@@ -10,13 +10,14 @@
 //
 
 #include <tf/transform_broadcaster.h>
+#include <pcl/kdtree/impl/io.hpp> 
 #include <Eigen/Dense>
 #include "visualization_tools/bounding_box.h"
 
 using namespace std;
 
 BoundingBox::BoundingBox()
-	:topic_name("/bounding_box"), isBox(true), bb_height(1.7), bb_width(0.5), bb_depth(0.3)
+	:topic_name("/bounding_box"), isBox(false), bb_height(1.7), bb_width(0.5), bb_depth(0.3)
 {
 	pub = n.advertise<visualization_msgs::Marker>(topic_name, 1);
 
@@ -34,17 +35,20 @@ BoundingBox::BoundingBox()
 	bb.color.g = 1.0;
 	bb.color.b = 1.0;
 	bb.color.a = 0.7;
+
+	bb.lifetime = ros::Duration(0.1);
 }
 
 bool BoundingBox::empty()
 {
-	bool flag = true;
-
-	if(bb.points.size() == 24){
-		flag = false;
-	}
-
-	return flag;
+	// bool flag = true;
+    //
+	// if(bb.points.size() == 24){
+	// 	flag = false;
+	// }
+    //
+	// return flag;
+	return !isBox;
 }
 
 void BoundingBox::setTopicName(string str)
@@ -62,7 +66,7 @@ void BoundingBox::setPose(geometry_msgs::Pose pose)
 void BoundingBox::vcovCalculator(const pcl::PointCloud<pcl::PointXYZ>::Ptr &pc, Eigen::Matrix2d &vcov)
 {
 	int n = pc->points.size();
-	if(!n){
+	if(n < 4){ // 3点だと平面(Boxにならない)
 		// cout << "!!!!! EMPTY CLOUD (in pca) !!!!!" << endl;
 		isBox = false;
 		return;
@@ -160,6 +164,14 @@ void BoundingBox::pca(const pcl::PointCloud<pcl::PointXYZ>::Ptr &pc)
 	int min = values(0) < values(1) ? 0 : 1;
 	int	max = 1 - min;
 
+	double sum = values(0) + values(1);
+
+	if(sum < 1e-6){
+		curv = 1.0;
+	}else{
+		curv = values(min) / sum;
+	}
+
 	Eigen::Vector2d vec;
 
 	vec = vectors.col(max);
@@ -245,10 +257,39 @@ visualization_msgs::Marker BoundingBox::getMarker()
 	return bb;
 }
 
-void BoundingBox::pc2bb(pcl::PointCloud<pcl::PointXYZ>::Ptr &pc)
+void BoundingBox::pc2bb(const pcl::PointCloud<pcl::PointXYZ>::Ptr &pc)
 {
 	pca(pc);
-	setBox();
+	if(isBox) setBox();
+}
+
+template<class T_p>
+void BoundingBox::pc2bb(const T_p& p)
+{
+	pcl::PointCloud<pcl::PointXYZ>::Ptr pc(new pcl::PointCloud<pcl::PointXYZ>);
+	pcl::copyPointCloud(*p, *pc);
+	pc2bb(pc);
+}
+template void BoundingBox::pc2bb<pcl::PointCloud<pcl::PointXYZRGB>::Ptr>(const pcl::PointCloud<pcl::PointXYZRGB>::Ptr&);
+
+double BoundingBox::height()
+{
+	return bb_height;
+}
+
+double BoundingBox::width()
+{
+	return bb_width;
+}
+
+double BoundingBox::depth()
+{
+	return bb_depth;
+}
+
+double BoundingBox::curvature()
+{
+	return curv;
 }
 
 void BoundingBox::publish()
@@ -278,6 +319,7 @@ ostream& operator << (ostream &os, const BoundingBox &box)
 	os << "    width  : " << box.bb_width  << "\n" 
 	   << "    depth  : " << box.bb_depth  << "\n"
 	   << "    height : " << box.bb_height << "\n"
+	   << "    curvature : " << box.curv << "\n"
 	   << "    position  : (" << box.bb_pose.position.x << ", " 
 	   					  << box.bb_pose.position.y << ", " 
 						  << box.bb_pose.position.z << ")\n"

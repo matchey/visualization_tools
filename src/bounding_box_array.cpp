@@ -36,6 +36,8 @@ BoundingBoxArray::BoundingBoxArray()
 	bbs.color.g = 1.0;
 	bbs.color.b = 1.0;
 	bbs.color.a = 0.7;
+
+	bbs.lifetime = ros::Duration(0.1);
 }
 
 void BoundingBoxArray::setTopicName(string str)

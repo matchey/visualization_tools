@@ -35,32 +35,35 @@ int main(int argc, char* argv[])
 	ros::Subscriber sub_wheel = n.subscribe<nav_msgs::Odometry>("/tinypower/odom", 1, wheelCallback);
 	ros::Subscriber sub_human = n.subscribe<sensor_msgs::PointCloud2>("/human_recognition/positive_pt", 1, humanCallback);
 
-	ros::Publisher pub_human = n.advertise<sensor_msgs::PointCloud2>("/human_recognition/positive_position", 1);
+	// ros::Publisher pub_human = n.advertise<sensor_msgs::PointCloud2>("/human_recognition/positive_position", 1);
 
 	ros::Time::init();
-	ros::Rate loop_rate(10);
+	ros::Rate loop_rate(30);
 
-	BoundingBox bb;
+	// BoundingBox bb;
 	BoundingBoxArray bbs;
 
-	pcl::PointCloud<pcl::PointXYZ>::Ptr pc(new pcl::PointCloud<pcl::PointXYZ>);
-	pcl::PointXYZ p;
+	// pcl::PointCloud<pcl::PointXYZ>::Ptr pc(new pcl::PointCloud<pcl::PointXYZ>);
+	// pcl::PointXYZ p;
 
 	while(ros::ok()){
-		p.x = pose.position.x;
-		p.y = pose.position.y;
-		pc->points.push_back(p);
+		// p.x = pose.position.x;
+		// p.y = pose.position.y;
+		// pc->points.push_back(p);
 		// pub_human();
 		// bb.pc2bb(pc);
-		bb.setPose(pose);
-		bb.publish();
+		// bb.setPose(pose);
+		// bb.publish();
 
+		// cout << "pc size : " << pc->points.size() << endl;
 		bbs.clear();
 		// bbs.push_back(bb);
 		bbs.push_back(pc);
 		// bbs.push_back<pcl::PointCloud<pcl::PointXYZ>::Ptr&>(pc);
 		bbs.publish();
 
+		cout << "\033[2J";
+		printf("\033[%d;%dH", 1, 1);
 		// cout << bb << endl;
 		cout << bbs << endl;
 

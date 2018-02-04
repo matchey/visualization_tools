@@ -1,5 +1,6 @@
 
 #include <ros/ros.h>
+#include <geometry_msgs/Point.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/TransformStamped.h>
 #include "visualization_tools/velocity_arrow_array.h"
@@ -13,8 +14,13 @@ class ArrowsPublisher
 	ros::Subscriber sub2;
 		
 	VelocityArrowArray vaa;
-	geometry_msgs::Pose p1;
-	geometry_msgs::Pose p2;
+	geometry_msgs::Pose pose1;
+	geometry_msgs::Pose pose2;
+	geometry_msgs::Pose pose3;
+	geometry_msgs::Pose pose4;
+
+	geometry_msgs::Point p1;
+	geometry_msgs::Point p2;
 
 	bool flag_cb1;
 	bool flag_cb2;
@@ -28,20 +34,28 @@ class ArrowsPublisher
 	ArrowsPublisher()
 		: flag_cb1(false), flag_cb2(false)
 	{
-		sub1 = n.subscribe<geometry_msgs::TransformStamped>("/vicon/aotn1/aotn1", 1,
+		// sub1 = n.subscribe<geometry_msgs::TransformStamped>("/vicon/aotn1/aotn1", 1,
+		// 		&ArrowsPublisher::Point1Callback, this);
+		// sub2 = n.subscribe<geometry_msgs::TransformStamped>("/vicon/aotn2/aotn2", 1,
+		// 		&ArrowsPublisher::Point2Callback, this);
+		sub1 = n.subscribe<geometry_msgs::TransformStamped>("/vicon/infant_velodyne/infant_velodyne", 1,
 				&ArrowsPublisher::Point1Callback, this);
-		sub2 = n.subscribe<geometry_msgs::TransformStamped>("/vicon/aotn2/aotn2", 1,
+		sub2 = n.subscribe<geometry_msgs::TransformStamped>("/vicon/person_1/person_1", 1,
 				&ArrowsPublisher::Point2Callback, this);
+
+		vaa.filter(20); // 何点分使って平均出すか [100Hzでviconでてるから5だと20Hzで全更新]
 	}
 
 	void Point1Callback(const geometry_msgs::TransformStamped::ConstPtr& msg){
-		pointSubstitution(p1.position, msg->transform.translation);
-		pointSubstitution(p1.orientation, msg->transform.rotation);
+		pointSubstitution(p1, msg->transform.translation);
+		pointSubstitution(pose1.position, msg->transform.translation);
+		quatSubstitution(pose1.orientation, msg->transform.rotation);
 		flag_cb1 = true;
 	}
 	void Point2Callback(const geometry_msgs::TransformStamped::ConstPtr& msg){
-		pointSubstitution(p2.position, msg->transform.translation);
-		pointSubstitution(p2.orientation, msg->transform.rotation);
+		pointSubstitution(p2, msg->transform.translation);
+		pointSubstitution(pose2.position, msg->transform.translation);
+		quatSubstitution(pose2.orientation, msg->transform.rotation);
 		flag_cb2 = true;
 	}
 
@@ -77,7 +91,21 @@ bool ArrowsPublisher::isSet()
 
 void ArrowsPublisher::pub_arrows()
 {
-	vaa.setPoints(p1, p2);
+	pose3.position.x = pose1.position.x + pose1.orientation.x*pose2.position.x;
+	pose3.position.y = pose1.position.y + pose2.position.y;
+	pose3.position.z = pose1.orientation.z*pose1.position.z + pose2.position.z;
+	quatSubstitution(pose3.orientation, pose1.orientation);
+	pose3.orientation.w = pose1.orientation.w + pose2.orientation.w;
+
+	pose4.position.x = pose1.position.x - pose2.position.x;
+	pose4.position.y = pose1.position.y - pose1.orientation.y*pose2.position.y;
+	pose4.position.z = pose1.position.z - pose2.position.z;
+	quatSubstitution(pose4.orientation, pose2.orientation);
+	pose4.orientation.w = pose1.orientation.w - pose2.orientation.w;
+
+	// vaa.setPoints(p1, p2);
+	vaa.setPoints(pose1, pose2);
+	// vaa.setPoints(pose1, pose2, pose3 ,pose4, p1, p2);
 	vaa.publish();
 }
 

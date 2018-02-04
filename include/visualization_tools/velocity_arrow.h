@@ -24,18 +24,31 @@ class VelocityArrow
 
 	visualization_msgs::Marker va; //Velocity Arrow
 	std::string topic_name;
+	// std::string frame_id;
 	Differential diff;
 	Eigen::Vector3d v;
+	int save;
+	int cnt;
+	bool filled;
+	double velocity_sum;
+	std::vector<double> velocities;
+	bool flag_pub;
 
 	static int id;
+
+	void initialize();
+	void setNorm();
 
 	public:
 	VelocityArrow();
 	void setTopicName(const std::string&);
+	void setFrameID(const std::string&);
+	void setPoint(const geometry_msgs::Pose&); //Pose
 	template<class T_p>
-	void setPoint(const T_p&);
+	void setPoint(const T_p&); //Point
 	template<class T_p>
-	void setPoint2d(const T_p&);
+	void setPoint2d(const T_p&); //Point
+	void filter(const int&);
 	visualization_msgs::Marker get() const;
 	void publish();
 

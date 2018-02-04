@@ -25,12 +25,19 @@ class VelocityArrowArray
 	std::vector<VelocityArrow> vas;
 	visualization_msgs::MarkerArray arrows;
 	bool isBegin;
+	int count;
+	int save;
+
+	void push_back();
+	template<class F, class... T_p>
+	void push_back(const F&, const T_p&...);
 
 	public:
 	VelocityArrowArray();
-	template<class... T_p>
-	void setPoints(T_p...);
+	template<class... T_a>
+	void setPoints(const T_a&...);
 	void setTopicName(const std::string&);
+	void filter(const int&);
 	void publish();
 
 	friend std::ostream& operator << (std::ostream&, const VelocityArrowArray&);

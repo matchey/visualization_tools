@@ -14,7 +14,7 @@
 using namespace std;
 
 VelocityArrowArray::VelocityArrowArray()
-	: topic_name("/velocity_arrows"), isBegin(true)
+	: topic_name("/velocity_arrows"), isBegin(true), count(0), save(1)
 {
 	pub = n.advertise<visualization_msgs::MarkerArray>(topic_name, 1);
 }
@@ -23,6 +23,11 @@ void VelocityArrowArray::setTopicName(const string& str)
 {
 	topic_name = str;
 	pub = n.advertise<visualization_msgs::MarkerArray>(topic_name, 1);
+}
+
+void VelocityArrowArray::filter(const int& num)
+{
+	save = num;
 }
 
 void VelocityArrowArray::publish()
@@ -39,5 +44,11 @@ ostream& operator << (ostream &os, const VelocityArrowArray &va)
 	return os;
 }
 
+// void VelocityArrow::setPoints(T_a...); //in header (set_points.h)
+
 //////////////// pritvate /////////////
+
+void VelocityArrowArray::push_back(){}
+// void VelocityArrow::push_back(F, T_p); //in header (set_points.h)
+
 

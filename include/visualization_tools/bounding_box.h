@@ -34,6 +34,7 @@ class BoundingBox
 	double bb_width;
 	double bb_depth;
 	geometry_msgs::Point bb_center;
+	double curv;
 
 	void vcovCalculator(const pcl::PointCloud<pcl::PointXYZ>::Ptr&, Eigen::Matrix2d&);
 	void calcRange(const pcl::PointCloud<pcl::PointXYZ>::Ptr&, Eigen::Vector2d&, double&, double&, int);
@@ -51,7 +52,13 @@ class BoundingBox
 	void setSize(double, double, double); //height, width, depth
 	void setCenter(double, double, double); //x, y, z
 	visualization_msgs::Marker getMarker();
-	void pc2bb(pcl::PointCloud<pcl::PointXYZ>::Ptr&); //PointCloud to Bounding Box
+	void pc2bb(const pcl::PointCloud<pcl::PointXYZ>::Ptr&); //PointCloud to Bounding Box
+	template<class T_p>
+	void pc2bb(const T_p&);
+	double height();
+	double width();
+	double depth();
+	double curvature();
 	void publish();
 
 	friend std::ostream& operator << (std::ostream&, const BoundingBox&);

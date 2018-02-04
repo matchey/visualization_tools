@@ -154,7 +154,7 @@ add_library(velocity_arrow_array src/velocity_arrow.cpp src/velocity_arrow_array
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/visualization_tools_node.cpp)
-add_executable(test_bb src/test.cpp src/bounding_box.cpp src/bounding_box_array.cpp)
+add_executable(test_bb src/test_bb.cpp src/bounding_box.cpp src/bounding_box_array.cpp)
 add_executable(test_velocity_arrows src/test_arrow.cpp src/velocity_arrow.cpp src/velocity_arrow_array.cpp)
 
 ## Rename C++ executable without prefix
