@@ -57,9 +57,31 @@ void BoundingBox::setTopicName(string str)
 	pub = n.advertise<visualization_msgs::Marker>(topic_name, 1);
 }
 
+void BoundingBox::setFrameId(string str)
+{
+	bb.header.frame_id = str;
+}
+
 void BoundingBox::setPose(geometry_msgs::Pose pose)
 {
 	bb_pose = pose;
+	setBox();
+}
+
+void BoundingBox::setSize(const double& h, const double& w, const double& d)
+{
+	bb_height = h;
+	bb_width  = w;
+	bb_depth  = d;
+	isBox = true;
+	setBox();
+}
+
+void BoundingBox::setCenter(const double& x, const double& y, const double& z)
+{
+	bb_center.x = x;
+	bb_center.y = y;
+	bb_center.z = z;
 	setBox();
 }
 

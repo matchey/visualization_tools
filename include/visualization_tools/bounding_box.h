@@ -48,9 +48,10 @@ class BoundingBox
 	BoundingBox();
 	bool empty();
 	void setTopicName(std::string);
+	void setFrameId(std::string);
 	void setPose(geometry_msgs::Pose);
-	void setSize(double, double, double); //height, width, depth
-	void setCenter(double, double, double); //x, y, z
+	void setSize(const double&, const double&, const double&); //height, width, depth
+	void setCenter(const double&, const double&, const double&); //x, y, z
 	visualization_msgs::Marker getMarker();
 	void pc2bb(const pcl::PointCloud<pcl::PointXYZ>::Ptr&); //PointCloud to Bounding Box
 	template<class T_p>
