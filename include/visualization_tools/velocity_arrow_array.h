@@ -43,7 +43,7 @@ class VelocityArrowArray
 	friend std::ostream& operator << (std::ostream&, const VelocityArrowArray&);
 };
 
-#include "visualization_tools/velocity_arrow_array/set_points.h"
+#include "visualization_tools/impl/velocity_arrow_array/set_points.hpp"
 
 #endif
 

@@ -41,8 +41,10 @@ class VelocityArrow
 
 	public:
 	VelocityArrow();
-	void setTopicName(const std::string&);
+	void setHeader(const std_msgs::Header&);
+	void setTime(const ros::Time&);
 	void setFrameID(const std::string&);
+	void setTopicName(const std::string&);
 	void setPoint(const geometry_msgs::Pose&); //Pose
 	template<class T_p>
 	void setPoint(const T_p&); //Point

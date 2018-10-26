@@ -41,7 +41,8 @@ int main(int argc, char* argv[])
 	ros::Rate loop_rate(30);
 
 	// BoundingBox bb;
-	BoundingBoxArray bbs;
+	visualization_tools::BoundingBoxArray bbs;
+	// visualization_tools::BoundingBoxArray bbs(n);
 
 	// pcl::PointCloud<pcl::PointXYZ>::Ptr pc(new pcl::PointCloud<pcl::PointXYZ>);
 	// pcl::PointXYZ p;
@@ -51,7 +52,7 @@ int main(int argc, char* argv[])
 		// p.y = pose.position.y;
 		// pc->points.push_back(p);
 		// pub_human();
-		// bb.pc2bb(pc);
+		// bb.fromPCL(pc);
 		// bb.setPose(pose);
 		// bb.publish();
 

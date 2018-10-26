@@ -17,22 +17,32 @@ using namespace std;
 int VelocityArrow::id = 0;
 
 VelocityArrow::VelocityArrow()
-	:topic_name("/velocity_arrow"),
-	 save(1), cnt(0), filled(false), velocity_sum(0.0),
-	 flag_pub(false)
+	: topic_name("/velocity_arrow"),
+	  save(1), cnt(0), filled(false), velocity_sum(0.0),
+	  flag_pub(false)
 {
 	initialize();
+}
+
+void VelocityArrow::setHeader(const std_msgs::Header& h)
+{
+	va.header = h;
+}
+
+void VelocityArrow::setTime(const ros::Time& t)
+{
+	va.header.stamp = t;
+}
+
+void VelocityArrow::setFrameID(const string& str)
+{
+	va.header.frame_id = str;
 }
 
 void VelocityArrow::setTopicName(const string& str)
 {
 	topic_name = str;
 	pub = n.advertise<visualization_msgs::Marker>(topic_name, 1);
-}
-
-void VelocityArrow::setFrameID(const string& str)
-{
-	va.header.frame_id = str;
 }
 
 void VelocityArrow::setPoint(const geometry_msgs::Pose& pose)
@@ -44,7 +54,6 @@ void VelocityArrow::setPoint(const geometry_msgs::Pose& pose)
 	va.pose.position.y = pose.position.y;
 	va.pose.position.z = pose.position.z;
 	va.pose.orientation = pose.orientation;
-	va.header.stamp = ros::Time::now();
 }
 
 template<class T_p>
@@ -67,7 +76,6 @@ void VelocityArrow::setPoint(const T_p& p)
 		va.pose.orientation.z = vn(2);
 		va.pose.orientation.w = 0.0;
 	}
-	va.header.stamp = ros::Time::now();
 }
 template void VelocityArrow::setPoint<geometry_msgs::Point>(const geometry_msgs::Point&);
 
@@ -82,7 +90,6 @@ void VelocityArrow::setPoint2d(const T_p& p)
 	va.pose.position.z = 0.0;
 	geometry_msgs::Quaternion quat = tf::createQuaternionMsgFromYaw(atan2(v(1), v(0)));
 	va.pose.orientation = quat;
-	va.header.stamp = ros::Time::now();
 }
 template void VelocityArrow::setPoint2d<geometry_msgs::Point>(const geometry_msgs::Point&);
 
@@ -102,7 +109,7 @@ void VelocityArrow::publish()
 		pub = n.advertise<visualization_msgs::Marker>(topic_name, 1);
 		flag_pub = true;
 	}
-	va.header.stamp = ros::Time::now();
+	// va.header.stamp = current_time;
 	pub.publish(va);
 }
 
@@ -140,7 +147,6 @@ void VelocityArrow::initialize()
 	va.pose.position.y = 0.0;
 	va.pose.position.z = 0.0;
 	va.pose.orientation.w = 1.0;
-	va.header.stamp = ros::Time::now();
 }
 
 void VelocityArrow::setNorm()
